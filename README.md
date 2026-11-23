@@ -61,7 +61,7 @@ northwind-rest-api/
 
 ### Prerequisites
 
-- Python 3.11 or later
+- Python 3.13 or later
 - MySQL Server
 - Git
 
