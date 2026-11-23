@@ -1,4 +1,9 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, ValidationError, fields, validate
+
+
+def validate_non_empty(value):
+    if not value.strip():
+        raise ValidationError("Field cannot be empty.")
 
 
 class CustomerSchema(Schema):
@@ -8,11 +13,17 @@ class CustomerSchema(Schema):
     )
     first_name = fields.String(
         required=True,
-        validate=validate.Length(min=1, max=50),
+        validate=[
+            validate.Length(min=1, max=50),
+            validate_non_empty,
+        ],
     )
     last_name = fields.String(
         required=True,
-        validate=validate.Length(min=1, max=50),
+        validate=[
+            validate.Length(min=1, max=50),
+            validate_non_empty,
+        ],
     )
     email_address = fields.Email(
         allow_none=True,
@@ -39,17 +50,22 @@ class ProductSchema(Schema):
     )
     product_name = fields.String(
         required=True,
-        validate=validate.Length(min=1, max=50),
+        validate=[
+            validate.Length(min=1, max=50),
+            validate_non_empty,
+        ],
     )
     description = fields.String(allow_none=True)
     standard_cost = fields.Decimal(
         allow_none=True,
         as_string=True,
+        places=4,
         validate=validate.Range(min=0),
     )
     list_price = fields.Decimal(
         required=True,
         as_string=True,
+        places=4,
         validate=validate.Range(min=0),
     )
     quantity_per_unit = fields.String(
@@ -71,11 +87,13 @@ class OrderDetailSchema(Schema):
     quantity = fields.Decimal(
         required=True,
         as_string=True,
+        places=4,
         validate=validate.Range(min=0, min_inclusive=False),
     )
     unit_price = fields.Decimal(
         required=True,
         as_string=True,
+        places=4,
         validate=validate.Range(min=0),
     )
     discount = fields.Float(
@@ -98,6 +116,7 @@ class OrderSchema(Schema):
     shipping_fee = fields.Decimal(
         allow_none=True,
         as_string=True,
+        places=4,
         validate=validate.Range(min=0),
     )
     payment_type = fields.String(
